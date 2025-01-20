@@ -15,6 +15,7 @@ func SetupRouter(service *service.BookService) *gin.Engine {
 	router.POST("/books", bookHandler.CreateBook)
 	router.GET("/books/:id", bookHandler.GetBookById)
 	router.DELETE("/books/:id", bookHandler.DeleteBookById)
+	router.PUT("/books/:id", bookHandler.UpdateBookById)
 
 	return router
 }
