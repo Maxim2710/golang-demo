@@ -82,3 +82,23 @@ func (s *BookService) DeleteBookById(id int64) error {
 
 	return nil
 }
+
+func (s *BookService) UpdateBookById(book *models.Book) (*models.Book, error) {
+	query := `
+		UPDATE books 
+		SET title = COALESCE(NULLIF($1, ''), title),
+		    author = COALESCE(NULLIF($2, ''), author)
+		WHERE id = $3
+		RETURNING *
+		`
+
+	var updatedBook models.Book
+
+	err := s.DB.QueryRowx(query, book.Title, book.Author, book.ID).StructScan(&updatedBook)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedBook, nil
+}
