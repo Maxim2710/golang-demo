@@ -3,6 +3,8 @@ package app
 import (
 	"golang-demo/internal/config"
 	"golang-demo/internal/database"
+	"golang-demo/internal/service"
+	"golang-demo/internal/transport/http"
 )
 
 func Run() error {
@@ -20,5 +22,9 @@ func Run() error {
 
 	defer db.Close()
 
-	return nil
+	bookService := service.NewBookService(db)
+
+	router := http.SetupRouter(bookService)
+
+	return router.Run("localhost:8080")
 }
