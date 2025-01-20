@@ -1,6 +1,8 @@
 package service
 
 import (
+	"database/sql"
+	"errors"
 	"github.com/jmoiron/sqlx"
 	"golang-demo/internal/models"
 )
@@ -34,4 +36,23 @@ func (s *BookService) CreateBook(book *models.Book) error {
 	}
 
 	return nil
+}
+
+func (s *BookService) GetBookById(id int64) (*models.Book, error) {
+	query := `
+		SELECT id, title, author, created_at FROM books WHERE id = $1
+	`
+
+	var book models.Book
+	err := s.DB.Get(&book, query, id)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("book not found")
+		}
+
+		return nil, err
+	}
+
+	return &book, nil
 }
