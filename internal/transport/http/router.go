@@ -13,6 +13,7 @@ func SetupRouter(service *service.BookService) *gin.Engine {
 	bookHandler := NewBookHandler(service)
 
 	router.POST("/books", bookHandler.CreateBook)
+	router.GET("/books/:id", bookHandler.GetBookById)
 
 	return router
 }
