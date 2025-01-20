@@ -40,7 +40,9 @@ func (s *BookService) CreateBook(book *models.Book) error {
 
 func (s *BookService) GetBookById(id int64) (*models.Book, error) {
 	query := `
-		SELECT id, title, author, created_at FROM books WHERE id = $1
+		SELECT id, title, author, created_at 
+		FROM books 
+		WHERE id = $1
 	`
 
 	var book models.Book
@@ -55,4 +57,28 @@ func (s *BookService) GetBookById(id int64) (*models.Book, error) {
 	}
 
 	return &book, nil
+}
+
+func (s *BookService) DeleteBookById(id int64) error {
+	query := `
+		DELETE FROM books 
+		WHERE id = $1
+	`
+
+	result, err := s.DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return errors.New("book not found")
+	}
+
+	return nil
 }
